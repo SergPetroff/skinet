@@ -9,10 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
-{
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController:ControllerBase
+{ 
+    public class ProductsController:BaseApiController
     {
         private readonly IProductRepository _repo;
         public ProductsController(IProductRepository repo){
@@ -28,7 +26,9 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id){
-            return await _repo.GetProductByIdAsync(id);
+            var product = await _repo.GetProductByIdAsync(id);
+            if(product == null) return NotFound();
+            return product;
         }
 
         [HttpGet("brands")]
