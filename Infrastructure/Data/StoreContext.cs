@@ -4,11 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class StoreContext : DbContext
+    public class StoreContext : IdentityDbContext<User>
     {
         public StoreContext(DbContextOptions<StoreContext> options) : base(options)
         {
@@ -28,6 +30,13 @@ namespace Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole{Name="Member", NormalizedName ="MEMBER"},
+                    new IdentityRole{Name="Admin", NormalizedName ="ADMIN"}
+                );
+            
             
         }
 
