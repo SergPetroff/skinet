@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class AccauntController : BaseApiController
+    public class AccountController : BaseApiController
     {
         private readonly UserManager<User> _userManager;
         public TokenService _tokenService { get; }
 
-        public AccauntController(UserManager<User> userManager, TokenService tokenService)
+        public AccountController(UserManager<User> userManager, TokenService tokenService)
         {
             _tokenService = tokenService;
             _userManager = userManager;
