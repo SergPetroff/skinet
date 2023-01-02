@@ -32,7 +32,7 @@ namespace API.Controllers
 
 
 
-        [HttpPut]
+        [HttpPost]
         public async Task<ActionResult> AddItemToBasket(int productId, int quantity)
         {
             var basket = await RetrieveBasket(GetBuyerId());

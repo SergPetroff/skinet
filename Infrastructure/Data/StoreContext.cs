@@ -4,13 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class StoreContext : IdentityDbContext<User>
+    public class StoreContext : IdentityDbContext<User, Role, int>
     {
         public StoreContext(DbContextOptions<StoreContext> options) : base(options)
         {
@@ -25,16 +26,24 @@ namespace Infrastructure.Data
 
         public DbSet<Basket> Baskets { get; set; }
 
+        public DbSet<Order> Orders{ get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            modelBuilder.Entity<IdentityRole>()
+            modelBuilder.Entity<User>()
+                .HasOne(a => a.Address)
+                .WithOne()
+                .HasForeignKey<UserAddress>(a => a.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Role>()
                 .HasData(
-                    new IdentityRole{Name="Member", NormalizedName ="MEMBER"},
-                    new IdentityRole{Name="Admin", NormalizedName ="ADMIN"}
+                    new Role{Id=1, Name="Member", NormalizedName ="MEMBER"},
+                    new Role{Id=2,  Name="Admin", NormalizedName ="ADMIN"}
                 );
             
             
