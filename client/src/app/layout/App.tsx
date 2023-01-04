@@ -15,37 +15,37 @@ import ServerErrors from "../errors/ServerErrors";
 import NotFound from "../errors/NotFound";
 import BasketPage from "../../features/basket/BasketPage";
 import LoadingCpmponent from "./LoadingComponent";
-import CheckoutPage from "../chekout/CheckoutPage";
-import {useAppDispatch} from "../store/configureStore"
+import CheckoutPage from "../cheсkout/CheckoutPage";
+import { useAppDispatch } from "../store/configureStore"
 import { fetchBasketAsync } from "../../features/basket/basketSlice";
 import Login from "../../features/account/Login";
 
 import Register from "../../features/account/Register";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
-import { ProtectedRoutes } from "./PrivateRoute";
+import Orders from "../../features/orders/Orders";
 
 function App() {
 
-  const dispatch =useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(true);
 
-const initApp = useCallback(async () => {
-    try{
+  const initApp = useCallback(async () => {
+    try {
       await dispatch(fetchCurrentUser());
       await dispatch(fetchBasketAsync());
-    }catch(error){
+    } catch (error) {
 
     }
-  },[dispatch])
+  }, [dispatch])
 
   useEffect(() => {
 
     console.log('app')
     initApp().then(() => setLoading(false));
-      
-    
-  },[initApp])
+
+
+  }, [initApp])
 
   const [darkmode, setDarkMode] = useState<boolean>(false)
   const paletteType = darkmode ? 'dark' : 'light'
@@ -56,39 +56,40 @@ const initApp = useCallback(async () => {
     },
   });
 
-  const changeTheme = () =>{
+  const changeTheme = () => {
     setDarkMode(!darkmode)
   }
 
-  if(loading) return <LoadingCpmponent message="Initialising app ..."/>
+  if (loading) return <LoadingCpmponent message="Initialising app ..." />
 
   return (
 
-    
+
     <ThemeProvider theme={theme}>
-      <ToastContainer  position="bottom-right" theme="colored" draggable/>
+      <ToastContainer position="bottom-right" theme="colored" draggable />
       <CssBaseline />
       <Header checked={darkmode} changeTheme={changeTheme} />
       <Container>
-      <Routes>
-        <Route path="/" element={<HomePage/>} />
-        <Route path="/catalog" element={<Catalog/>} />
-        <Route path="/catalog/:id" element={<ProductDetails/>} />
-        <Route path="/about" element={<AboutPage/>} />
-        <Route path="/contact" element={<ContactPage/>} />
-        <Route path="/server-error" element={<ServerErrors/>} />
-        <Route path='*'  element={<NotFound/>} />
-        <Route path='/basket'  element={<BasketPage/>} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/catalog/:id" element={<ProductDetails />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/server-error" element={<ServerErrors />} />
+          <Route path='*' element={<NotFound />} />
+          <Route path='/basket' element={<BasketPage />} />
 
-        <Route element={<ProtectedRoutes />}>
+          {/* <Route element={<ProtectedRoutes />}>
           <Route path="/checkout" element={<CheckoutPage />} />
-        </Route>
-
-        <Route path='/login'  element={<Login/>} />
-        <Route path='/register'  element={<Register/>} />
+        </Route> */}
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
 
         </Routes>
-       
+
       </Container>
 
     </ThemeProvider>

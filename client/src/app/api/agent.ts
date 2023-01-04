@@ -81,7 +81,7 @@ const TestErrors = {
 
 const Basket = {
     get: () => request.get('basket'),
-    addItem:(productId:number, quantity =1) => request.put(`basket?productId=${productId}&quantity=${quantity}`,{}),
+    addItem:(productId:number, quantity =1) => request.post(`basket?productId=${productId}&quantity=${quantity}`,{}),
     removeItem:(productId:number, quantity =1) => request.delete(`basket?productId=${productId}&quantity=${quantity}`)
 
 }
@@ -89,11 +89,19 @@ const Basket = {
 const Account ={
     login: (values:any) => request.post('account/login', values),
     register:(values:any) => request.post('account/register', values),
-    currentUser: () => request.get('account/currentUser')
+    currentUser: () => request.get('account/currentUser'),
+    fetchAddress:()=> request.get('account/savedAddress')
+}
+
+const Orders ={
+    list: () => request.get('orders'),
+    fetch:(id:number) => request.get(`orders/${id}`),
+    create:(values:any) => request.post('orders', values)
+    
 }
 
 const agent = {
-    Catalog,TestErrors,Basket,Account
+    Catalog,TestErrors,Basket,Account,Orders
 }
 
 export default agent

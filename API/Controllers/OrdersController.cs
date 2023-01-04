@@ -71,7 +71,7 @@ namespace API.Controllers
             }
 
             var subtotal = items.Sum(item => item.Price * item.Quantity);
-            var deliveryFee = subtotal > 10000 ? 0 : 500;
+            var deliveryFee = subtotal > 100 ? 0 : 5;
 
             var order = new Order
             {
@@ -86,9 +86,11 @@ namespace API.Controllers
             _context.Baskets.Remove(basket);
 
             if(orderDTO.SaveAddress){
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
+                var user = await _context.Users
+                    .Include(a => a.Address)
+                    .FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
 
-                user.Address = new UserAddress{
+                var address = new UserAddress{
 
                     FullName = orderDTO.ShippingAddress.FullName,
                     Address1 = orderDTO.ShippingAddress.Address1,
@@ -99,8 +101,8 @@ namespace API.Controllers
                     Zip = orderDTO.ShippingAddress.Zip
 
                 };
-
-                _context.Update(user);
+                user.Address = address;
+                //_context.Update(user);
             }
 
             var result = await _context.SaveChangesAsync() > 0;

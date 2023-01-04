@@ -2,7 +2,7 @@ import { Button, Menu, Fade, MenuItem } from "@mui/material";
 import React from "react";
 import { signOut } from "../../features/account/accountSlice";
 import { useAppDispatch, useAppSelector } from "../store/configureStore";
-import { useNavigate  } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { clearBasket } from "../../features/basket/basketSlice";
 
 
@@ -35,7 +35,7 @@ const {user} = useAppSelector(state => state.account);
         TransitionComponent={Fade}
       >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My orders</MenuItem>
+        <MenuItem component={Link} to='/orders'>My orders</MenuItem>
         <MenuItem onClick={() => {
             dispatch(signOut());
             dispatch(clearBasket());
