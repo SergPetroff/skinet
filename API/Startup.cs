@@ -31,23 +31,23 @@ namespace API
         public Startup(IConfiguration config)
         {
             _config = config;
-            
+
         }
 
-      
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddControllers();
-            services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(c =>     
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme{
-                    Description="Jwt auth header",
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Jwt auth header",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -66,21 +66,28 @@ namespace API
                             In = ParameterLocation.Header
                         },
                         new List<string>()
-                        
+
                     }
                 });
             });
-
+            var connect = _config.GetConnectionString("DefaultConnection");
+            services.AddDbContext<StoreContext>(
+                x => x.UseNpgsql(connect)
+                );
+            
             services.AddCors();
 
-            services.AddIdentityCore<User>(opt => {
+            services.AddIdentityCore<User>(opt =>
+            {
                 opt.User.RequireUniqueEmail = true;
             })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<StoreContext>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => {
-                    opt.TokenValidationParameters = new TokenValidationParameters{
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
@@ -109,11 +116,15 @@ namespace API
 
             app.UseRouting();
 
-            app.UseCors(opt => {
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseCors(opt =>
+            {
                 opt.AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
-                .SetIsOriginAllowed(origin => true) 
+                .SetIsOriginAllowed(origin => true)
                 .WithOrigins("http://localhost:3000");
             });
             app.UseAuthentication();
@@ -122,6 +133,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "fallback", "Fallback");
             });
         }
     }
